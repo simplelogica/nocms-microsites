@@ -47,6 +47,7 @@ class NoCms::Microsites::Micrositer
   # Changes requests to fit microsite path
   def remap_paths_with_locales(root_path, request_path)
     locales = []
+    request_path = request_path[1..-1]
     I18n.available_locales.each do |locale|
       locales << "^(\/#{locale.to_s}\/)"
     end
@@ -54,7 +55,7 @@ class NoCms::Microsites::Micrositer
     # if request comes with locale, we maintain it in new request
     if request_path.match(locales.join('|'))
       locale = request_path.at(0..3)
-      path = "#{locale}#{root_path}/#{request_path.remove(locale)}"
+      path = "#{locale}#{root_path}#{request_path.remove(locale)}"
     else
       path = "#{root_path}#{request_path}"
     end
