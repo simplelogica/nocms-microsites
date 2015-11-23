@@ -13,7 +13,7 @@
 
 ActiveRecord::Schema.define(version: 20151122235828) do
 
-  create_table "no_cms_microsites_microsite", force: :cascade do |t|
+  create_table "no_cms_microsites_microsites", force: :cascade do |t|
     t.string   "title"
     t.string   "domain"
     t.string   "root_path"
