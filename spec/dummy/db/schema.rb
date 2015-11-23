@@ -11,7 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151123125244) do
+ActiveRecord::Schema.define(version: 20151123165522) do
+
+  create_table "microsite_translations", force: :cascade do |t|
+    t.integer "microsite_id"
+    t.string  "locale"
+    t.string  "root_path"
+  end
 
   create_table "no_cms_microsites_microsites", force: :cascade do |t|
     t.string   "title"
