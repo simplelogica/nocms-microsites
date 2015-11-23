@@ -13,8 +13,8 @@
 
 ActiveRecord::Schema.define(version: 20151123165522) do
 
-  create_table "microsite_translations", force: :cascade do |t|
-    t.integer "microsite_id"
+  create_table "no_cms_microsites_microsite_translations", force: :cascade do |t|
+    t.integer "no_cms_microsites_microsite_id"
     t.string  "locale"
     t.string  "root_path"
   end
