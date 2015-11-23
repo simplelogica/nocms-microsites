@@ -14,6 +14,7 @@ gemspec
 # gem 'byebug', group: [:development, :test]
 
 gem 'config'
+gem 'globalize', '~> 5.0.0'
 
 
 group :development, :test do
