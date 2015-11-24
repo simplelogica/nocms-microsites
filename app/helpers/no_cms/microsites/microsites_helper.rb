@@ -1,7 +1,4 @@
 module NoCms::Microsites
-  module Microsites
-    module MicrositesHelper
-
-    end
+  module MicrositesHelper
   end
 end

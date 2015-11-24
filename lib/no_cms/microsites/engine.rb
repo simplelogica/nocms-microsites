@@ -1,3 +1,5 @@
+require 'config'
+
 module NoCms
   module Microsites
     class Engine < ::Rails::Engine
