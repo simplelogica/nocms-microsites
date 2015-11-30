@@ -26,11 +26,12 @@ class NoCms::Microsites::Micrositer
   # Searches a microsite by domain and calls to remap request
   # with microsite root path
   def replace_route_for request, env
+    Rails.logger.info("Looking for microsite #{request.host}")
     microsite = NoCms::Microsites::Microsite.find_by_domain(request.host)
     
     unless microsite.blank?
       Rails.logger.info(">>> Previous request path was #{env["PATH_INFO"]} and microsite root path is #{microsite.root_path}")
-      env["PATH_INFO"] = remap_paths_with_locales(microsite.root_path, env["PATH_INFO"],)
+      env["PATH_INFO"] = remap_paths_with_locales(microsite, env["PATH_INFO"])
     end
 
   end
@@ -45,7 +46,7 @@ class NoCms::Microsites::Micrositer
   end
 
   # Changes requests to fit microsite path
-  def remap_paths_with_locales(root_path, request_path)
+  def remap_paths_with_locales(microsite, request_path)
     locales = []
     request_path = request_path[1..-1]
     I18n.available_locales.each do |locale|
@@ -55,9 +56,11 @@ class NoCms::Microsites::Micrositer
     # if request comes with locale, we maintain it in new request
     if request_path.match(locales.join('|'))
       locale = request_path.at(0..3)
-      path = "#{locale}#{root_path}#{request_path.remove(locale)}"
+      I18n.locale = locale
+
+      path = "#{locale}#{microsite.root_path}#{request_path.remove(locale)}"
     else
-      path = "#{root_path}#{request_path}"
+      path = "#{microsite.root_path}#{request_path}"
     end
 
     path
