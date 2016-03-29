@@ -3,7 +3,7 @@ class NoCms::Microsites::Micrositer
     @app = app
     @default_host = Settings.default_host
   end
-  
+
   def call(env)
     request = Rack::Request.new(env)
 
@@ -11,16 +11,20 @@ class NoCms::Microsites::Micrositer
       # If request host is not the default one, we have to treat this request
       Rails.logger.info(">>> request host is #{request.host} and default host is #{@default_host}")
 
+      microsite = nil
       # If request starts by assets or locale/assets, do not change path
       unless request.path.match("#{not_redirected_routes.join('|')}")
         Rails.logger.info(">>> We have to replace the route, the path is #{request.path}")
-        replace_route_for request, env
+        microsite = replace_route_for request, env
       end
     end
     status, headers, response = @app.call(env)
+    unless microsite.blank?
+      replace_host_for response, request, microsite
+    end
     [status, headers, response]
   end
-  
+
   private
 
   # Searches a microsite by domain and calls to remap request
@@ -28,12 +32,13 @@ class NoCms::Microsites::Micrositer
   def replace_route_for request, env
     Rails.logger.info("Looking for microsite #{request.host}")
     microsite = NoCms::Microsites::Microsite.find_by_domain(request.host)
-    
+
     unless microsite.blank?
       Rails.logger.info(">>> Previous request path was #{env["PATH_INFO"]} and microsite root path is #{microsite.root_path}")
       env["PATH_INFO"] = remap_paths_with_locales(microsite, env["PATH_INFO"])
     end
 
+    microsite
   end
 
   # Gets roots of not redirected routes to form a regex
@@ -65,5 +70,17 @@ class NoCms::Microsites::Micrositer
 
     path
   end
-  
+
+  # Changes response to fit new microsite url
+  def replace_host_for response, request, microsite
+    length = 0
+    response.each do |body|
+      body.gsub!(/\/#{microsite.root_path}\//, '/')
+      length += body.length
+    end
+    if response.respond_to? :header
+      response.header["Content-Length"] = length.to_s
+    end
+  end
+
 end
