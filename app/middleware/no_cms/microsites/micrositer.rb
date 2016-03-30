@@ -20,7 +20,6 @@ class NoCms::Microsites::Micrositer
     end
     status, headers, response = @app.call(env)
     unless microsite.blank?
-      Rails.logger.info(">>> Replacing host")
       replace_host_for response, request, microsite
     end
     [status, headers, response]
@@ -35,7 +34,6 @@ class NoCms::Microsites::Micrositer
     microsite = NoCms::Microsites::Microsite.find_by_domain(request.host)
 
     unless microsite.blank?
-      Rails.logger.info(">>> Microsite was found, its root path is #{microsite.root_path}")
       Rails.logger.info(">>> Previous request path was #{env["PATH_INFO"]} and microsite root path is #{microsite.root_path}")
       env["PATH_INFO"] = remap_paths_with_locales(microsite, env["PATH_INFO"])
     end
@@ -69,6 +67,8 @@ class NoCms::Microsites::Micrositer
     else
       path = "#{microsite.root_path}#{request_path}"
     end
+
+    Rails.logger.info(">>>> Returning new path for request #{path}")
 
     path
   end
