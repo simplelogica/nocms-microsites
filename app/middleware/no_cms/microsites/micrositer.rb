@@ -1,7 +1,7 @@
 class NoCms::Microsites::Micrositer
   def initialize(app)
     @app = app
-    @default_host = Settings.default_host
+    @default_host = Settings.host
   end
 
   def call(env)
