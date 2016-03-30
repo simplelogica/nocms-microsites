@@ -77,8 +77,11 @@ class NoCms::Microsites::Micrositer
   def replace_host_for response, request, microsite
     length = 0
     response.each do |body|
-      Rails.logger.info(">>>> Removing root path from response")
-      body.gsub!(/\/#{microsite.root_path}\//, '/')
+      Rails.logger.info(">>>> Removing root path from response, searching #{Settings.host}")
+      body.gsub!(/#{Settings.host}\/#{microsite.root_path}/, '/')
+      body.gsub!(/#{Settings.host}\//, '/')
+      Rails.logger.info(">>>> Removing microsite root path #{microsite.root_path} from response")
+      body.gsub!(/#{microsite.root_path}/, '/')
       length += body.length
     end
     if response.respond_to? :header
