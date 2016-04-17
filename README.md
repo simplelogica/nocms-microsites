@@ -30,7 +30,7 @@ Each request is treated by ```Micrositer``` middleware. If request comes from an
 
 After create the response, it changes all links to fit new microsite root path, so it changes all root path occurrences in code with '/'.
 
-### Examples
+# Examples
 
 ## Domain for german specific application
 
@@ -70,4 +70,4 @@ end
 microsite.save
 ```
 
-When we receive a request for ```myappspecificcontent.com``` in english our application will return the response from ```http://myapplication.com/specific-content/``` but changing all ```/specific-content/``` ocurrences with '/'. If we call ```myappspecificcontent.com/es/``` it will return ```http://myapplication.com/specific-content/es/contenido-especifico/```
+When we receive a request for ```myappspecificcontent.com``` in english our application will return the response from ```http://myapplication.com/specific-content/``` but changing all ```/specific-content/``` ocurrences with '/'. If we call ```myappspecificcontent.com/es/``` it will return ```http://myapplication.com/es/contenido-especifico/```
