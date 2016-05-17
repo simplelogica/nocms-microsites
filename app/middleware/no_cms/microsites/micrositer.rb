@@ -82,6 +82,16 @@ class NoCms::Microsites::Micrositer
       body.gsub!(/#{Settings.host}\//, '/')
       Rails.logger.info(">>>> Removing microsite root path #{microsite.root_path} from response")
       body.gsub!(/#{microsite.root_path}/, '/')
+      body.gsub!("href=\"'#{microsite.root_path}\"", '/')
+
+      # If last char from root_path is '/' we have to replace links without this char too
+      root_path_last_char = microsite.root_path[-1, 1]
+      if root_path_last_char == '/'
+        root_path_without_last_slash = microsite.root_path[0...-1]
+        Rails.logger.info(">>>> Removing microsite root path without last slash #{root_path_without_last_slash} from response")
+        body.gsub!("href=\"#{root_path_without_last_slash}\"", 'href="/"')
+      end
+
       length += body.length
     end
     if response.respond_to? :header
