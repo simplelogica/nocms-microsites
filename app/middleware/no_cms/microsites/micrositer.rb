@@ -20,7 +20,7 @@ class NoCms::Microsites::Micrositer
     end
     status, headers, response = @app.call(env)
     unless microsite.blank?
-      replace_host_for response, request, microsite
+      replace_host_for response, request, microsite, headers, status
     end
     [status, headers, response]
   end
@@ -74,7 +74,7 @@ class NoCms::Microsites::Micrositer
   end
 
   # Changes response to fit new microsite url
-  def replace_host_for response, request, microsite
+  def replace_host_for response, request, microsite, headers, status
     length = 0
     response.each do |body|
       Rails.logger.info(">>>> Removing root path from response, searching #{Settings.host}")
