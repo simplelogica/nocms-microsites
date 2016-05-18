@@ -94,6 +94,11 @@ class NoCms::Microsites::Micrositer
 
       length += body.length
     end
+    # If we are redirecting, we need to remove root path from redirection url too
+    if status == 302
+      new_location = headers["Location"].gsub!("#{request.host}#{microsite.root_path}", "#{request.host}/")
+      headers["Location"] = new_location
+    end
     if response.respond_to? :header
       response.header["Content-Length"] = length.to_s
     end
