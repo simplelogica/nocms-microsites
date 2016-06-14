@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.name        = "nocms-microsites"
   s.version     = NoCms::Microsites::VERSION
   s.authors     = ["zapic0"]
-  s.email       = ["zapico@gmail.com"]
+  s.email       = ["fernando.zapico@the-cocktail.com"]
   s.homepage    = "https://github.com/simplelogica/nocms-microsites"
   s.summary     = "Gem to add NoCMS support for many domains sharing the same routes or with sub-sets of them"
   s.description = "This engine allows NoCMS to have many domains for the same app sharing routes from a different root (www.example.com/myexample available too on www.myexample.com/)"
