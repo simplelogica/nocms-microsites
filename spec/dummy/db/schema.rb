@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151123165522) do
+ActiveRecord::Schema.define(version: 20160812120834) do
 
   create_table "no_cms_microsites_microsite_translations", force: :cascade do |t|
     t.integer "no_cms_microsites_microsite_id"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20151123165522) do
     t.string   "root_path"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "internal_name"
   end
 
 end
