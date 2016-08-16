@@ -14,6 +14,7 @@ class NoCms::Microsites::Micrositer
       Rails.logger.info("Looking for microsite #{request.host}")
       microsite = NoCms::Microsites::Microsite.find_by_domain(request.host)
       env["MICROSITE_KEY"] = microsite.internal_name if microsite && microsite.internal_name.present?
+      env["MICROSITE_ID"] = microsite.id if microsite
 
       # If request starts by assets or locale/assets, do not change path
       unless microsite.nil? || request.path.match("#{not_redirected_routes.join('|')}")
