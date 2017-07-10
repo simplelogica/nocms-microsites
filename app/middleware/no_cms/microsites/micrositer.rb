@@ -11,11 +11,15 @@ class NoCms::Microsites::Micrositer
       # If request host is not the default one, we have to treat this request
       Rails.logger.info(">>> request host is #{request.host} and default host is #{@default_host}")
 
-      microsite = nil
+      Rails.logger.info("Looking for microsite #{request.host}")
+      microsite = NoCms::Microsites::Microsite.find_by_domain(request.host)
+      env["MICROSITE_KEY"] = microsite.internal_name if microsite && microsite.internal_name.present?
+      env["MICROSITE_ID"] = microsite.id if microsite
+
       # If request starts by assets or locale/assets, do not change path
-      unless request.path.match("#{not_redirected_routes.join('|')}")
+      unless microsite.nil? || request.path.match("#{not_redirected_routes.join('|')}")
         Rails.logger.info(">>> We have to replace the route, the path is #{request.path}")
-        microsite = replace_route_for request, env
+        replace_route_for request, env, microsite
       end
     end
     status, headers, response = @app.call(env)
@@ -29,16 +33,11 @@ class NoCms::Microsites::Micrositer
 
   # Searches a microsite by domain and calls to remap request
   # with microsite root path
-  def replace_route_for request, env
-    Rails.logger.info("Looking for microsite #{request.host}")
-    microsite = NoCms::Microsites::Microsite.find_by_domain(request.host)
-
+  def replace_route_for request, env, microsite
     unless microsite.blank?
       Rails.logger.info(">>> Previous request path was #{env["PATH_INFO"]} and microsite root path is #{microsite.root_path}")
       env["PATH_INFO"] = remap_paths_with_locales(microsite, env["PATH_INFO"])
     end
-
-    microsite
   end
 
   # Gets roots of not redirected routes to form a regex

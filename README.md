@@ -15,7 +15,7 @@ gem "nocms-microsites", git: 'git@github.com:simplelogica/nocms-microsites.git',
 Once the gem is installed you can import all the migrations:
 
 ```
-rake nocms_microsites:install:migrations
+rake no_cms_microsites:install:migrations
 ```
 
 Set your default domain with key ```host```, for example for your ```myapplication.com```, set in your ```config/production.yml```:
