@@ -1,7 +1,7 @@
 class NoCms::Microsites::Micrositer
   def initialize(app)
     @app = app
-    @default_host = Settings.host
+    @default_host = NoCms::Microsites.default_host
   end
 
   def call(env)
@@ -76,12 +76,15 @@ class NoCms::Microsites::Micrositer
   def replace_host_for response, request, microsite, headers, status
     length = 0
     response.each do |body|
-      Rails.logger.info(">>>> Removing root path from response, searching #{Settings.host}")
-      body.gsub!(/#{Settings.host}\/#{microsite.root_path}/, '/')
-      body.gsub!(/#{Settings.host}\//, '/')
+      unless  @default_host.blank?
+        Rails.logger.info(">>>> Removing root path from response, searching #{@default_host}")
+        body.gsub!(/#{@default_host}\/#{microsite.root_path}/, '/')
+        body.gsub!(/#{@default_host}\//, '/')
+      end
+
       Rails.logger.info(">>>> Removing microsite root path #{microsite.root_path} from response")
       body.gsub!(/#{microsite.root_path}/, '/')
-      body.gsub!("href=\"'#{microsite.root_path}\"", '/')
+      body.gsub!("href=\"'#{microsite.root_path}\"", 'href="/"')
 
       # If last char from root_path is '/' we have to replace links without this char too
       root_path_last_char = microsite.root_path[-1, 1]
