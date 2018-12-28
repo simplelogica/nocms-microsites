@@ -1,7 +1,7 @@
 class NoCms::Microsites::Micrositer
   def initialize(app)
     @app = app
-    @default_host = Settings.host
+    @default_host = Settings.host_without_protocol
   end
 
   def call(env)
@@ -10,7 +10,6 @@ class NoCms::Microsites::Micrositer
     if request.host != @default_host
       # If request host is not the default one, we have to treat this request
       Rails.logger.info(">>> request host is #{request.host} and default host is #{@default_host}")
-
       Rails.logger.info("Looking for microsite #{request.host}")
       microsite = NoCms::Microsites::Microsite.find_by_domain(request.host)
       env["MICROSITE_KEY"] = microsite.internal_name if microsite && microsite.internal_name.present?
@@ -21,6 +20,9 @@ class NoCms::Microsites::Micrositer
         Rails.logger.info(">>> We have to replace the route, the path is #{request.path}")
         replace_route_for request, env, microsite
       end
+    else
+      # Es un microsite fake para la pagina principal
+      env["MICROSITE_ID"] = NoCms::Microsites::Microsite.where(domain: @default_host).pluck(:id).first
     end
     status, headers, response = @app.call(env)
     unless microsite.blank?
