@@ -1,7 +1,7 @@
 class NoCms::Microsites::Micrositer
   def initialize(app)
     @app = app
-    @default_host = Settings.host_without_protocol
+    @default_host = trim_url(Settings.host)
   end
 
   def call(env)
@@ -105,4 +105,7 @@ class NoCms::Microsites::Micrositer
     end
   end
 
+  def trim_url(str)
+    str.sub %r{^https?:(//|\\\\)}i, ''
+  end
 end
