@@ -11,7 +11,7 @@ class NoCms::Microsites::Micrositer
       # If request host is not the default one, we have to treat this request
       Rails.logger.info(">>> request host is #{request.host} and default host is #{@default_host}")
       Rails.logger.info("Looking for microsite #{request.host}")
-      microsite = NoCms::Microsites::Microsite.find_by_domain(request.host)
+      microsite = NoCms::Microsites::Microsite.find_by_domain(request.host).select(:id, :internal_name, :root_path)
       env["MICROSITE_KEY"] = microsite.internal_name if microsite && microsite.internal_name.present?
       env["MICROSITE_ID"] = microsite.id if microsite
 
@@ -22,7 +22,9 @@ class NoCms::Microsites::Micrositer
       end
     else
       # Es un microsite fake para la pagina principal
-      env["MICROSITE_ID"] = NoCms::Microsites::Microsite.where(domain: @default_host).pluck(:id).first
+      if microsite_default_id = NoCms::Microsites::Microsite.where(domain: @default_host).pluck(:id).first
+        env["MICROSITE_ID"] = microsite_default_id
+      end
     end
     status, headers, response = @app.call(env)
     unless microsite.blank?
