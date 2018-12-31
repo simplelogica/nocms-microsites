@@ -11,7 +11,7 @@ class NoCms::Microsites::Micrositer
       # If request host is not the default one, we have to treat this request
       Rails.logger.info(">>> request host is #{request.host} and default host is #{@default_host}")
       Rails.logger.info("Looking for microsite #{request.host}")
-      microsite = NoCms::Microsites::Microsite.find_by_domain(request.host).select(:id, :internal_name, :root_path)
+      microsite = NoCms::Microsites::Microsite.select(:id, :internal_name, :root_path).find_by_domain(request.host)
       env["MICROSITE_KEY"] = microsite.internal_name if microsite && microsite.internal_name.present?
       env["MICROSITE_ID"] = microsite.id if microsite
 
