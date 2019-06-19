@@ -6,7 +6,7 @@ module NoCms
       isolate_namespace NoCms::Microsites
 
       initializer "microsites.middleware" do |app|
-        app.config.app_middleware.use "NoCms::Microsites::Micrositer"
+        app.config.app_middleware.use NoCms::Microsites::Micrositer
       end
     end
   end

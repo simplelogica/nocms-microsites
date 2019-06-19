@@ -31,7 +31,6 @@ group :test do
   gem 'database_cleaner'
   gem 'faker'
   gem 'carrierwave' # For development and testing purposes (Images)
-  gem 'appraisal'
   gem 'simplecov'
   gem 'simplecov-json'
   gem "generator_spec"
