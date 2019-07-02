@@ -1,7 +1,7 @@
 class NoCms::Microsites::Micrositer
   def initialize(app)
     @app = app
-    @default_host = Settings.host
+    @default_host = trim_url(Settings.host)
   end
 
   def call(env)
@@ -10,12 +10,20 @@ class NoCms::Microsites::Micrositer
     if request.host != @default_host
       # If request host is not the default one, we have to treat this request
       Rails.logger.info(">>> request host is #{request.host} and default host is #{@default_host}")
+      Rails.logger.info("Looking for microsite #{request.host}")
+      microsite = NoCms::Microsites::Microsite.select(:id, :internal_name, :root_path).find_by_domain(request.host)
+      env["MICROSITE_KEY"] = microsite.internal_name if microsite && microsite.internal_name.present?
+      env["MICROSITE_ID"] = microsite.id if microsite
 
-      microsite = nil
       # If request starts by assets or locale/assets, do not change path
-      unless request.path.match("#{not_redirected_routes.join('|')}")
+      unless microsite.nil? || request.path.match("#{not_redirected_routes.join('|')}")
         Rails.logger.info(">>> We have to replace the route, the path is #{request.path}")
-        microsite = replace_route_for request, env
+        replace_route_for request, env, microsite
+      end
+    else
+      # Es un microsite fake para la pagina principal
+      if microsite_default_id = NoCms::Microsites::Microsite.where(domain: @default_host).pluck(:id).first
+        env["MICROSITE_ID"] = microsite_default_id
       end
     end
     status, headers, response = @app.call(env)
@@ -29,16 +37,11 @@ class NoCms::Microsites::Micrositer
 
   # Searches a microsite by domain and calls to remap request
   # with microsite root path
-  def replace_route_for request, env
-    Rails.logger.info("Looking for microsite #{request.host}")
-    microsite = NoCms::Microsites::Microsite.find_by_domain(request.host)
-
+  def replace_route_for request, env, microsite
     unless microsite.blank?
       Rails.logger.info(">>> Previous request path was #{env["PATH_INFO"]} and microsite root path is #{microsite.root_path}")
       env["PATH_INFO"] = remap_paths_with_locales(microsite, env["PATH_INFO"])
     end
-
-    microsite
   end
 
   # Gets roots of not redirected routes to form a regex
@@ -104,4 +107,7 @@ class NoCms::Microsites::Micrositer
     end
   end
 
+  def trim_url(str)
+    str.sub %r{^https?:(//|\\\\)}i, ''
+  end
 end
