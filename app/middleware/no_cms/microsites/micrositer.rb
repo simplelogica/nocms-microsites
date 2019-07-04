@@ -8,7 +8,7 @@ class NoCms::Microsites::Micrositer
   def call(env)
     request = Rack::Request.new(env)
 
-    if request.host == @default_host || (@default_hosts.present? && @default_hosts.include?(request.host))
+    if request.host == @default_host || (@default_hosts.present? && @default_hosts.include?(request.host))
       # Es un microsite fake para la pagina principal
       @default_hosts ||= []
       if microsite_default_id = NoCms::Microsites::Microsite.where(domain: ([@default_host] + @default_hosts).flatten.uniq).pluck(:id).first
