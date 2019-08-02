@@ -2,12 +2,19 @@ class NoCms::Microsites::Micrositer
   def initialize(app)
     @app = app
     @default_host = trim_url(Settings.host)
+    @default_hosts = Settings.extra_default_hosts.tr(' ', ''). split(',').map { |u| trim_url(u) } if Settings.try(:extra_default_hosts)
   end
 
   def call(env)
     request = Rack::Request.new(env)
 
-    if request.host != @default_host
+    if request.host == @default_host || (@default_hosts.present? && @default_hosts.include?(request.host))
+      # Es un microsite fake para la pagina principal
+      @default_hosts ||= []
+      if microsite_default_id = NoCms::Microsites::Microsite.where(domain: ([@default_host] + @default_hosts).flatten.uniq).pluck(:id).first
+        env['MICROSITE_ID'] = microsite_default_id
+      end
+    else
       # If request host is not the default one, we have to treat this request
       Rails.logger.info(">>> request host is #{request.host} and default host is #{@default_host}")
       Rails.logger.info("Looking for microsite #{request.host}")
@@ -19,11 +26,6 @@ class NoCms::Microsites::Micrositer
       unless microsite.nil? || request.path.match("#{not_redirected_routes.join('|')}")
         Rails.logger.info(">>> We have to replace the route, the path is #{request.path}")
         replace_route_for request, env, microsite
-      end
-    else
-      # Es un microsite fake para la pagina principal
-      if microsite_default_id = NoCms::Microsites::Microsite.where(domain: @default_host).pluck(:id).first
-        env["MICROSITE_ID"] = microsite_default_id
       end
     end
     status, headers, response = @app.call(env)
