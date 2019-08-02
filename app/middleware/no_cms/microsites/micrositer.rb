@@ -80,26 +80,31 @@ class NoCms::Microsites::Micrositer
   def replace_host_for response, request, microsite, headers, status
     length = 0
     response.each do |body|
+
       Rails.logger.info(">>>> Removing root path from response, searching #{Settings.host}")
-      body.gsub!(/#{Settings.host}\/#{microsite.root_path}/, '/')
-      body.gsub!(/#{Settings.host}\//, '/')
+
+      # In rails 5 The key name is frozen so you can't modify it in place -
+      # just use gsub rather than gsub! so that it returns a modified copy of the string
+      # rather than trying to do inplace modification
+      body = body.gsub(/#{Settings.host}\/#{microsite.root_path}/, '/')
+      body = body.gsub(/#{Settings.host}\//, '/')
       Rails.logger.info(">>>> Removing microsite root path #{microsite.root_path} from response")
-      body.gsub!(/#{microsite.root_path}/, '/')
-      body.gsub!("href=\"'#{microsite.root_path}\"", '/')
+      body = body.gsub(/#{microsite.root_path}/, '/')
+      body = body.gsub("href=\"'#{microsite.root_path}\"", '/')
 
       # If last char from root_path is '/' we have to replace links without this char too
       root_path_last_char = microsite.root_path[-1, 1]
       if root_path_last_char == '/'
         root_path_without_last_slash = microsite.root_path[0...-1]
         Rails.logger.info(">>>> Removing microsite root path without last slash #{root_path_without_last_slash} from response")
-        body.gsub!("href=\"#{root_path_without_last_slash}\"", 'href="/"')
+        body = body.gsub("href=\"#{root_path_without_last_slash}\"", 'href="/"')
       end
 
       length += body.length
     end
     # If we are redirecting, we need to remove root path from redirection url too
     if status == 302
-      new_location = headers["Location"].gsub!("#{request.host}#{microsite.root_path}", "#{request.host}/")
+      new_location = headers["Location"].gsub("#{request.host}#{microsite.root_path}", "#{request.host}/")
       headers["Location"] = new_location unless new_location.blank?
     end
     if response.respond_to? :header

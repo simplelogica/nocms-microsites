@@ -20,9 +20,14 @@ module Dummy
     # config.i18n.default_locale = :de
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
-    config.active_record.raise_in_transactional_callbacks = true
 
-    config.middleware.use "NoCms::Microsites::Micrositer"
+    # In rails 5 remove the following line from application.rb
+    # Deprecated
+    if Rails::VERSION::MAJOR < 5
+      config.active_record.raise_in_transactional_callbacks = true
+    end
+
+    # config.middleware.use NoCms::Microsites::Micrositer
   end
 end
 
