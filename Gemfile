@@ -14,7 +14,7 @@ gemspec
 # gem 'byebug', group: [:development, :test]
 
 gem 'config'
-gem 'globalize', '~> 5.0.0'
+gem 'globalize', '~> 6.0.0'
 
 
 group :development, :test do
@@ -35,4 +35,3 @@ group :test do
   gem 'simplecov-json'
   gem "generator_spec"
 end
-
