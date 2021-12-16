@@ -13,7 +13,7 @@ gemspec
 # To use a debugger
 # gem 'byebug', group: [:development, :test]
 
-gem 'config'
+gem 'config', '~> 2.2'
 gem 'globalize', '~> 6.0.0'
 
 
@@ -26,7 +26,7 @@ end
 
 group :test do
   gem 'rspec-rails', '~> 3.0'
-  gem 'factory_girl'
+  gem 'factory_bot'
   gem 'capybara'
   gem 'database_cleaner'
   gem 'faker'
