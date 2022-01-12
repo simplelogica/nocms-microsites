@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nocms-microsites (0.1.0)
+    nocms-microsites (0.2.0)
       config (>= 1.0.0, < 3.0.0)
       globalize (>= 4.0.0, <= 6.0.1)
       rails (> 4.2, < 7.0)
