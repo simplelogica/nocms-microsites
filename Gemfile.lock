@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     nocms-microsites (0.0.1)
-      config (~> 1.0.0)
+      config (>= 1.0.0, < 1.8.0)
       globalize (>= 4.0.0, < 5.3)
       rails (> 4.2, < 5.3)
 
@@ -64,11 +64,13 @@ GEM
       json (>= 1.7)
       mime-types (>= 1.16)
     coderay (1.1.0)
-    concurrent-ruby (1.1.5)
+    concurrent-ruby (1.1.10)
     config (1.0.0)
       activesupport (>= 3.0)
       deep_merge (~> 1.0.0)
+    crass (1.0.6)
     database_cleaner (1.5.1)
+    date (3.3.1)
     debug_inspector (0.0.2)
     deep_merge (1.0.1)
     diff-lcs (1.2.5)
@@ -88,17 +90,30 @@ GEM
       activerecord (>= 4.2.0, < 4.3)
     i18n (0.7.0)
     json (1.8.3)
-    loofah (2.0.3)
+    loofah (2.19.1)
+      crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
-    mail (2.7.1)
+    mail (2.8.0)
       mini_mime (>= 0.1.1)
+      net-imap
+      net-pop
+      net-smtp
     method_source (0.8.2)
     mime-types (2.99)
-    mini_mime (1.0.1)
-    mini_portile (0.6.2)
+    mini_mime (1.1.2)
+    mini_portile2 (2.1.0)
     minitest (5.8.3)
-    nokogiri (1.6.6.4)
-      mini_portile (~> 0.6.0)
+    net-imap (0.3.2)
+      date
+      net-protocol
+    net-pop (0.1.2)
+      net-protocol
+    net-protocol (0.2.1)
+      timeout
+    net-smtp (0.3.3)
+      net-protocol
+    nokogiri (1.6.8.1)
+      mini_portile2 (~> 2.1.0)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -167,16 +182,17 @@ GEM
       json
       simplecov
     slop (3.6.0)
-    sprockets (3.7.2)
+    sprockets (4.1.1)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
-    sprockets-rails (3.2.1)
+    sprockets-rails (3.2.2)
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     sqlite3 (1.3.13)
     thor (0.19.1)
     thread_safe (0.3.5)
+    timeout (0.3.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     xpath (2.0.0)
